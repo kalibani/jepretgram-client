@@ -21,7 +21,7 @@
           <div class="panel-body">
             <div class="row">
               <div class="col-lg-12">
-                <form id="login-form" v-on:submit.prevent="doLogin" role="form" style="display: block;">
+                <form id="login-form" v-on:submit.prevent="doLogin(login).then(clear)" role="form" style="display: block;">
                   <div class="form-group">
                     <input type="email" name="email" tabindex="1" class="form-control" v-model="login.email" placeholder="Email" value="">
                   </div>
@@ -36,18 +36,18 @@
                     </div>
                   </div>
                 </form>
-                <form id="register-form" v-on:submit.prevent="doRegister" role="form" style="display: none;">
+                <form id="register-form" v-on:submit.prevent="doRegister(register).then(clear)" role="form" style="display: none;">
                   <div class="form-group">
-                    <input type="text" name="first_name" id="first_name" tabindex="1" class="form-control" v-model="register.first_name" placeholder="First Name" value="">
+                    <input type="email" name="email" id="email" tabindex="1" class="form-control" v-model="register.email" placeholder="email">
                   </div>
                   <div class="form-group">
-                    <input type="text" name="last_name" id="last_name" tabindex="1" class="form-control" v-model="register.last_name"placeholder="Last Name" value="">
+                    <input type="text" name="username" id="username" tabindex="1" class="form-control" v-model="register.username"placeholder="username">
                   </div>
                   <div class="form-group">
-                    <input type="email" name="email" tabindex="1" class="form-control" v-model="register.email" placeholder="Email Address" value="">
+                    <input type="password" name="password" tabindex="1" class="form-control" v-model="register.password" placeholder="password">
                   </div>
                   <div class="form-group">
-                    <input type="password" name="password" tabindex="2" class="form-control" v-model="register.password" placeholder="Password">
+                    <input type="fullname" name="fullname" tabindex="2" class="form-control" v-model="register.fullname" placeholder="Fullname">
                   </div>
                   <div class="form-group">
                     <div class="row">
@@ -67,7 +67,7 @@
 </template>
 
 <script>
-
+import { mapActions } from 'vuex'
 export default {
   name: 'HelloWorld',
   data () {
@@ -77,39 +77,30 @@ export default {
         password: ''
       },
       register: {
-        first_name: '',
-        last_name: '',
         email: '',
-        password: ''
+        username: '',
+        password: '',
+        fullname: ''
       }
     }
   },
+  beforeCreate(){
+    let token = localStorage.getItem('token')
+    if (token) {
+      this.$router.push('/home')
+    }else {
+      this.$router.push('/')
+    }
+  },
   methods: {
-    doLogin() {
-      var self = this
-      this.$http.post('/login',{
-        email: self.login.email,
-        password: self.login.password
-      }).then((response) => {
-        localStorage.setItem("token", response.data.token)
-      }).catch((err) => {
-        console.log(err);
-      })
+    ...mapActions([
+      'doLogin',
+      'doRegister'
+    ]),
 
-    },
-
-    doRegister(){
-      var self = this
-      this.$http.post('/register',{
-        first_name: self.register.first_name,
-        last_name: self.register.last_name,
-        email: self.register.email,
-        password: self.register.password
-      }).then((response) => {
-        alert('Sukses Register');
-      }).catch((err) => {
-        console.log(err);
-      })
+    clear(){
+      this.register = {},
+      this.login = {}
     }
   }
 }

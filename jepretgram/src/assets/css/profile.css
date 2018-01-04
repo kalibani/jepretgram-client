@@ -1,0 +1,16 @@
+#headers {
+  margin-top: 100px;
+}
+
+.text-center {
+  margin-bottom: 30px;
+}
+
+.avatar {
+  width: 22%;
+}
+
+.img-responsive {
+  width: 90%;
+  margin-top: 0 auto;
+}
