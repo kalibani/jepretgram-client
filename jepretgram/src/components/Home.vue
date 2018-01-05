@@ -6,8 +6,9 @@
         <div class="well well-lg">
           <div class="user">
             <label style="float:right;" id="follow">
+              
               <span class="btn btn-sm btn-primary">
-                <input type="checkbox"  v-model="follow" true-value="following"
+                <input type="checkbox" v-model="follow" true-value="following"
                 false-value="follow" class="custom-control-input">{{follow}}
               </span>
             </label>

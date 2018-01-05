@@ -9,6 +9,11 @@
 
 }
 
+.custom-control-input{
+  opacity:0;
+  position:absolute;
+  
+}
 .caption {
   margin-left: 25%;
   margin-top: 20px;

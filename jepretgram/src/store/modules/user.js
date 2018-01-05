@@ -17,7 +17,7 @@ const mutations = {
   saveUsers (state, payload){
     console.log('data register user')
     state.Users.push(payload)
-    payload = {}
+
   }
 
 }
@@ -26,16 +26,31 @@ const actions = {
   doLogin({ commit }, payload) {
     console.log(payload);
     http.post('/authentication/login', payload)
-    .then(({data}) => {
-      if(!data){
+    .then((response) => {
+      console.log(response.data);
+      if(response.data == 'Unregistered Email/Username, Please Register First!'){
         swal({
           title: 'Ooops',
-          text: data.message,
+          text: response.data,
+          icon: 'error',
+          button: 'OK'})
+      }else if (!response.data.token) {
+        swal({
+          title: 'Ooops',
+          text: response.data.message,
           icon: 'error',
           button: 'OK'})
       }else{
-        localStorage.setItem("token", data.token)
-        router.push('/home')
+        swal({
+          title: 'OK',
+          text: response.data.message,
+          icon: 'success',
+          button: 'OK'
+        }).then(() => {
+          localStorage.setItem("token", response.data.token)
+          location.reload()
+          router.push('/home2')
+        })
       }
     }).catch((err) => {
       console.log(err);
@@ -44,7 +59,6 @@ const actions = {
   },
 
   doRegister({ commit }, payload) {
-    let self = this
     http.post('/authentication/register', payload)
     .then(({data}) => {
       console.log(data)
@@ -57,7 +71,21 @@ const actions = {
     }).catch((err) => {
       console.log(err)
     })
+  },
 
+  updatePhoto({commit}, payload){
+    http.put('/authentication/register/'+id, payload)
+    .then(({data}) => {
+      console.log(data)
+      commit('saveUsers', data)
+      swal({
+        icon: 'success',
+        text: data.message,
+        button: 'OK'
+      })
+    }).catch((err) => {
+      console.log(err)
+    })
   }
 }
 

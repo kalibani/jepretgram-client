@@ -8,22 +8,36 @@
     <!-- edit form column -->
     <div class="row">
       <!-- left column -->
-      <div class="col-sm-8">
+      <div class="col-md-2" id="profiles">
         <div class="text-center">
-          <div v-if="!image">
+          <div v-if="!profiles.image">
             <img class="avatar img-circle img-thumbnail" alt="avatar" src="../assets/image/user.png"/>
             <h2>Select Profile Photo</h2>
-            <input type="file" class="text-center center-block well well-sm" @change="onFileChange">
+            <input type="file" class="text-center center-block well well-sm" id="inputFile" @change="onFileChange">
           </div>
           <div v-else>
-            <img class="avatar img-circle img-thumbnail" alt="avatar" :src="image"/>
-            <br><br>
-            <input type="file" class="text-center center-block well well-sm" @change="onFileChange">
+              <img class="avatar img-circle img-thumbnail" :src="profiles.image" id="upfile1" style="cursor:pointer"/>
+              <h4>Update Profile Photo</h4>
+              <input type="file" class="text-center center-block well well-sm" id="inputFile" @change="onFileChange">
           </div>
         </div>
       </div>
+      <div class="col-md-2 profile">
+          <h3>Kautzar Alibani
+            <button type="button" class="btn btn-secondary btn-sm">Edit Profile</button>
+          </h3>
+          <h3>Kautzar Alibani</h3>
+      </div>
+      <div class="col-md-2 button">
+        <h3 style="text-align:center;">
+          <span class="btn btn-md btn-primary btn-block">
+            <input type="checkbox" v-model="profiles.follower" true-value="following"
+            false-value="follow" class="btn btn-md btn-primary btn-block custom-control-input">{{profiles.follower}}
+          </span>
+        </h3>
+      </div>
     </div>
-    <div class="container gallery">
+    <div class="container gallery" id="gallery">
       <div class="row">
         <div class="col-sm-4">
           <img src="http://placehold.it/612x612/21BC9C/FFFFFF&amp;text=loading" class="img-responsive">
@@ -78,12 +92,23 @@ export default {
   },
   data(){
     return {
-      image:''
+      profiles: {
+        follower: 'follow',
+        image: ''
+      },
+
     };
   },
 
   methods:{
+
     onFileChange(e) {
+      let data = new FormData();
+      // data.append('email',this.profiles.email)
+      // data.append('username',this.profiles.username)
+      // data.append('password',this.profiles.password)
+      // data.append('fullname',this.profiles.fullname)
+      data.append('image',document.getElementById('inputFile').files[0])
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length)
         return;
@@ -95,11 +120,13 @@ export default {
       var self = this;
 
       reader.onload = (e) => {
-        self.image = e.target.result;
+        self.profiles.image = e.target.result;
       };
       reader.readAsDataURL(file);
     }
   }
+
+
 }
 </script>
 

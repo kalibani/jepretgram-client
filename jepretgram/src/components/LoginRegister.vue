@@ -23,10 +23,10 @@
               <div class="col-lg-12">
                 <form id="login-form" v-on:submit.prevent="doLogin(login).then(clear)" role="form" style="display: block;">
                   <div class="form-group">
-                    <input type="email" name="email" tabindex="1" class="form-control" v-model="login.email" placeholder="Email" value="">
+                    <input type="text" name="email" tabindex="1" class="form-control" v-model="login.email || login.username" placeholder="Email/username" value="" required>
                   </div>
                   <div class="form-group">
-                    <input type="password" name="password" tabindex="2" class="form-control" v-model="login.password" placeholder="Password">
+                    <input type="password" name="password" tabindex="2" class="form-control" v-model="login.password" placeholder="Password" required>
                   </div>
                   <div class="form-group">
                     <div class="row">
@@ -38,16 +38,16 @@
                 </form>
                 <form id="register-form" v-on:submit.prevent="doRegister(register).then(clear)" role="form" style="display: none;">
                   <div class="form-group">
-                    <input type="email" name="email" id="email" tabindex="1" class="form-control" v-model="register.email" placeholder="email">
+                    <input type="email" name="email" id="email" tabindex="1" class="form-control" v-model="register.email" placeholder="email" required>
                   </div>
                   <div class="form-group">
-                    <input type="text" name="username" id="username" tabindex="1" class="form-control" v-model="register.username"placeholder="username">
+                    <input type="text" name="username" id="username" tabindex="1" class="form-control" v-model="register.username"placeholder="username" required>
                   </div>
                   <div class="form-group">
-                    <input type="password" name="password" tabindex="1" class="form-control" v-model="register.password" placeholder="password">
+                    <input type="password" name="password" tabindex="1" class="form-control" v-model="register.password" placeholder="password" required>
                   </div>
                   <div class="form-group">
-                    <input type="fullname" name="fullname" tabindex="2" class="form-control" v-model="register.fullname" placeholder="Fullname">
+                    <input type="fullname" name="fullname" tabindex="2" class="form-control" v-model="register.fullname" placeholder="Fullname" required>
                   </div>
                   <div class="form-group">
                     <div class="row">
@@ -74,6 +74,7 @@ export default {
     return {
       login: {
         email: '',
+        username: '',
         password: ''
       },
       register: {
@@ -87,7 +88,7 @@ export default {
   beforeCreate(){
     let token = localStorage.getItem('token')
     if (token) {
-      this.$router.push('/home')
+      this.$router.push('/home2')
     }else {
       this.$router.push('/')
     }
