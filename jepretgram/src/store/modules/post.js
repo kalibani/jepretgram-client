@@ -14,10 +14,15 @@ const state = {
 }
 
 const mutations = {
-  savePost (state, payload){
+  saveData (state, payload){
     console.log('data postingan user----', payload)
     state.posts = payload.data
     console.log('data postingan user', state.posts)
+  },
+
+  savePost (state, payload) {
+    state.posts.push(payload)
+    console.log('ini hasilnya', state.posts);
   }
 
 }
@@ -27,11 +32,21 @@ const actions = {
     http.get('/jepret/home', payload)
     .then(({data}) => {
       console.log(data)
-      commit('savePost', data)
+      commit('saveData', data)
     }).catch((err) => {
       console.log(err)
     })
+  },
 
+  postImage({ commit }, payload){
+    console.log('data payload', payload);
+    http.post('/jepret/post', payload)
+    .then(({data}) =>{
+      console.log('postingan user', data);
+      commit('savePost', data)
+    }).catch((err) => {
+      console.log(err);
+    })
   }
 }
 

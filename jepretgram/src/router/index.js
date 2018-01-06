@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import LoginRegister from '@/components/LoginRegister'
 import Home from '@/components/Home'
-import Home2 from '@/components/Home2'
 import Profile from '@/components/Profile'
 
 Vue.use(Router)
@@ -20,14 +19,10 @@ export default new Router({
       component: Home
     },
     {
-      path: '/profile/:id',
+      path: '/profile/:userId',
       name: 'Profile',
-      component: Profile
-    },
-    {
-      path: '/home2',
-      name: 'Home2',
-      component: Home2
+      component: Profile,
+      props: true
     }
   ],
   mode: 'history'

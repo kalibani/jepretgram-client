@@ -10,14 +10,20 @@ const http = axios.create({
 })
 
 const state = {
-  Users: []
+  user: [],
+  profile: []
 }
 
 const mutations = {
-  saveUsers (state, payload){
-    console.log('data register user')
-    state.Users.push(payload)
-
+  isSelf (state, payload){
+    console.log('data user login----', payload)
+    state.user = payload
+    console.log('data user login', state.user.userId)
+  },
+  saveProfile (state, payload){
+    console.log('data Profile user----', payload)
+    state.profile = payload
+    console.log('data Profile user', state.profile)
   }
 
 }
@@ -49,7 +55,7 @@ const actions = {
         }).then(() => {
           localStorage.setItem("token", response.data.token)
           location.reload()
-          router.push('/home2')
+          router.push('/home')
         })
       }
     }).catch((err) => {
@@ -61,8 +67,6 @@ const actions = {
   doRegister({ commit }, payload) {
     http.post('/authentication/register', payload)
     .then(({data}) => {
-      console.log(data)
-      commit('saveUsers', data)
       swal({
         icon: 'success',
         text: data.message,
@@ -72,21 +76,44 @@ const actions = {
       console.log(err)
     })
   },
+  //
+  // updatePhoto({commit}, payload){
+  //   http.put('/authentication/register/'+id, payload)
+  //   .then(({data}) => {
+  //     console.log(data)
+  //     commit('saveUsers', data)
+  //     swal({
+  //       icon: 'success',
+  //       text: data.message,
+  //       button: 'OK'
+  //     })
+  //   }).catch((err) => {
+  //     console.log(err)
+  //   })
+  // },
 
-  updatePhoto({commit}, payload){
-    http.put('/authentication/register/'+id, payload)
+  getUserLogin({commit}){
+    http.post('/users/myprofile')
     .then(({data}) => {
-      console.log(data)
-      commit('saveUsers', data)
-      swal({
-        icon: 'success',
-        text: data.message,
-        button: 'OK'
-      })
-    }).catch((err) => {
-      console.log(err)
+      commit('isSelf', data)
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  },
+
+  getUserById({commit}, id){
+    http.get('/users/'+ id )
+    .then(({data}) => {
+      console.log('getUserById',data);
+      commit('saveProfile',data)
+    })
+    .catch(err =>{
+      console.log(err);
     })
   }
+
+
 }
 
 export default {

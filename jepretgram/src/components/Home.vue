@@ -1,60 +1,94 @@
 <template lang="html">
-  <div>
-    <app-navbar/>
-    <div class="container gallery" id="gallery">
+  <div class="">
+    <app-navbar :user="dataUser"/>
+    <div class="container">
       <div class="row">
-        <div class="well well-lg">
-          <div class="user">
-            <label style="float:right;" id="follow">
-              
-              <span class="btn btn-sm btn-primary">
-                <input type="checkbox" v-model="follow" true-value="following"
-                false-value="follow" class="custom-control-input">{{follow}}
-              </span>
-            </label>
-              <img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg" alt="profile" style="float:left;">
-              <h3>Marco </h3>
-          </div>
-          <img src="http://placehold.it/612x612/21BC9C/FFFFFF&amp;text=loading" class="img-responsive">
-          <br>
-          <div class="love">
-            <div class="pretty p-icon p-toggle p-plain">
-              <input type="checkbox" />
-              <div class="state p-off">
-                <i class="icon fa fa-heart-o"></i>
-                <label>fa-heart-o</label>
-              </div>
-              <div class="state p-on p-info-o">
-                <i class="icon fa fa-heart"></i>
-                <label>fa-heart</label>
-              </div>
-            </div>
+        <div class="col-md-2 col-sm-offset-1" style="float:right; margin: 8% 7% 8% 0%;">
+          <appUpload/>
+        </div>
+        <br><br><br>
+        <div class="col-sm-8 col-sm-offset-1" id="logout">
+          <div class="page-header">
 
           </div>
-          <div class="caption">Image Background: 21BC9C &amp; Image Foreground: FFFFFF</div>
-          <form class="form-horizontal"role="form" id="comment">
-            <div class="form-group">
-              <div class="col-lg-8">
-                <input class="form-control" type="text" placeholder="Add a comment... ">
+          <div class="comment-tabs" v-for="p in posts.posts" :key="p._id">
+            <div class="tab-content">
+              <div class="tab-pane active" id="comments-logout">
+                <ul class="media-list">
+                  <li class="media">
+                    <router-link class="pull-left" :to="{ name: 'Profile', params: {userId : p.posted_by._id} }">
+                      <img class="media-object img-circle" :src="p.posted_by.image" alt="profile">
+                    </router-link>
+                    <a  href="#">
+                    </a>
+                    <div class="media-body">
+                      <div class="well well-lg">
+                        <p class="media-heading text-uppercase reviews">{{p.posted_by.username}}</p>
+
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <img :src="p.image" class="img-responsive">
+                        </div>
+                        <p class="media-comment">
+                          <strong>{{p.posted_by.username}}</strong> {{p.caption}}
+                        </p>
+                        <div class="comment" v-for="c in p.comment">
+                          <strong> {{c.user.username }} </strong>
+                          {{ c.comment }}
+                        </div>
+                        <br>
+                        <form class="form-horizontal"role="form">
+                          <div class="form-group">
+                            <div class="col-lg-8">
+                              <input class="form-control" type="text" placeholder="Add a comment... ">
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
               </div>
             </div>
-          </form>
-        </div>
+          </div>
+	      </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 import navbar from '@/components/Navbar.vue'
+import upload from './Upload.vue'
 export default {
   data(){
     return {
       follow: 'follow'
-    };
+    }
   },
   components : {
-    appNavbar : navbar
+    appNavbar : navbar,
+    appUpload : upload
+
+  },
+  computed: {
+    ...mapState([
+      'posts'
+    ]),
+    dataUser(){
+      return this.$store.state.user.user
+    }
+  },
+
+  methods:{
+    ...mapActions([
+      'getAll',
+      'getUserLogin'
+    ])
+  },
+  created(){
+    this.getAll(),
+    this.getUserLogin()
   }
 }
 </script>

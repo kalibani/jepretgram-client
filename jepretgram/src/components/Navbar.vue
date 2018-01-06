@@ -14,11 +14,11 @@
                 <i class="fa fa-heart-o fa-lg" aria-hidden="true"></i>
               </a>
             </router-link>
-            <router-link :to="{ name: 'Profile' }">
-              <a class="navbar-brand">
-                <i class="fa fa-user fa-lg"></i>
-              </a>
-            </router-link>
+              <router-link :to="{ name: 'Profile', params: { userId: user.userId} }">
+                <a class="navbar-brand">
+                  <i class="fa fa-user fa-lg"></i>
+                </a>
+              </router-link>
     			</ul>
     			<form class="navbar-form search-form" role="search" id="search">
     				<input type="text" class="form-control" placeholder="Search" />
@@ -31,6 +31,7 @@
 
 <script>
 export default {
+  props:['user']
 }
 </script>
 

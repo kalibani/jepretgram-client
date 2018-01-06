@@ -88,7 +88,7 @@ export default {
   beforeCreate(){
     let token = localStorage.getItem('token')
     if (token) {
-      this.$router.push('/home2')
+      this.$router.push('/home')
     }else {
       this.$router.push('/')
     }

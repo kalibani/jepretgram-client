@@ -17,10 +17,11 @@
       <form class="form-horizontal"role="form">
         <div class="form-group">
           <div class="col-lg-8">
-            <input class="form-control" type="text" placeholder="Write caption... ">
+            <input class="form-control caption" id="caption" type="text" v-model="post.caption" placeholder="Write caption... ">
           </div>
         </div>
       </form>
+      <button class="btn btn-primary btn-sm upload" type="button" name="button" @click="postImage(data).then(clear)">Upload</button>
     </div>
   </div>
   </div>
@@ -28,44 +29,82 @@
 </template>
 
 <script>
-$(document).ready( function() {
-    $(document).on('change', '.btn-file :file', function() {
-  var input = $(this),
-    label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-  input.trigger('fileselect', [label]);
-  });
+  import { mapActions } from 'vuex'
+  export default {
+    data(){
+      return {
+        post:{
 
-  $('.btn-file :file').on('fileselect', function(event, label) {
+        }
+      }
+    },
 
-      var input = $(this).parents('.input-group').find(':text'),
-          log = label;
+    computed:{
+      data(){
+        let data = new FormData();
+        data.append('image',document.getElementById('imgInp').files[0])
+        data.append('caption',this.post.caption)
+        return data
 
-      if( input.length ) {
-          input.val(log);
-      } else {
-          if( log ) alert(log);
+      }
+    },
+
+    methods:{
+      ...mapActions([
+        'postImage'
+      ]),
+      clear(){
+        this.post = {}
       }
 
-  });
-  function readURL(input) {
-      if (input.files && input.files[0]) {
-          var reader = new FileReader();
-
-          reader.onload = function (e) {
-              $('#img-upload').attr('src', e.target.result);
-          }
-
-          reader.readAsDataURL(input.files[0]);
-      }
+    }
   }
 
-  $("#imgInp").change(function(){
-      readURL(this);
-  });
-});
-export default {
+  $(document).ready( function() {
+    $(".caption").hide()
+    $(".upload").hide()
+    $(document).on('change', '.btn-file :file', function() {
+      var input = $(this),
+      label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      input.trigger('fileselect', [label]);
+    });
 
-}
+    $('.btn-file :file').on('fileselect', function(event, label) {
+      var input = $(this).parents('.input-group').find(':text'),
+        log = label;
+      if( input.length ) {
+        input.val(log);
+      } else {
+        if( log ) alert(log);
+      }
+    });
+
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $('#img-upload').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    $("#imgInp").change(function(){
+      readURL(this);
+      $(".caption").show()
+      $(".upload").show()
+    });
+
+    $(".upload").click(function(){
+      setTimeout(function(){
+        $(".caption").hide()
+        $(".upload").hide()
+        location.reload()
+      }, 2000);
+    });
+
+  });
+
 
 </script>
 

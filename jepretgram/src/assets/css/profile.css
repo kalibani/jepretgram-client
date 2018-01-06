@@ -32,6 +32,9 @@
   position:absolute;
 
 }
+/*.updatePhoto{
+  display:none;
+}*/
 
 .uploadPhoto {
     position: absolute;

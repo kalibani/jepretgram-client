@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <app-navbar/>
+    <app-navbar :user="dataUser"/>
     <header id="headers">
       <div class="container">
       </div>
@@ -10,23 +10,26 @@
       <!-- left column -->
       <div class="col-md-2" id="profiles">
         <div class="text-center">
-          <div v-if="!profiles.image">
+          <div v-if="!dataprofile.data.image">
             <img class="avatar img-circle img-thumbnail" alt="avatar" src="../assets/image/user.png"/>
             <h2>Select Profile Photo</h2>
             <input type="file" class="text-center center-block well well-sm" id="inputFile" @change="onFileChange">
           </div>
           <div v-else>
-              <img class="avatar img-circle img-thumbnail" :src="profiles.image" id="upfile1" style="cursor:pointer"/>
-              <h4>Update Profile Photo</h4>
-              <input type="file" class="text-center center-block well well-sm" id="inputFile" @change="onFileChange">
+              <img class="avatar img-circle img-thumbnail updatePhoto-2" :src="dataprofile.data.image" style="cursor:pointer"/>
+              <div class="updatePhoto">
+                <h4>Update Profile Photo</h4>
+                <input type="file"
+                class="text-center center-block well well-sm" id="inputFile" @change="onFileChange">
+              </div>
           </div>
         </div>
       </div>
       <div class="col-md-2 profile">
-          <h3>Kautzar Alibani
+          <h3> {{ dataprofile.data.username }}
             <button type="button" class="btn btn-secondary btn-sm">Edit Profile</button>
           </h3>
-          <h3>Kautzar Alibani</h3>
+          <h3>{{ dataprofile.data.fullname }}</h3>
       </div>
       <div class="col-md-2 button">
         <h3 style="text-align:center;">
@@ -39,45 +42,15 @@
     </div>
     <div class="container gallery" id="gallery">
       <div class="row">
-        <div class="col-sm-4">
-          <img src="http://placehold.it/612x612/21BC9C/FFFFFF&amp;text=loading" class="img-responsive">
-          <div class="caption">Image Background: 21BC9C &amp; Image Foreground: FFFFFF</div>
-        </div>
-        <div class="col-sm-4">
-          <img src="http://placehold.it/612x612/33495E/FFFFFF&amp;text=loading" class="img-responsive">
-          <div class="caption">Image Background: 33495E &amp; Image Foreground: FFFFFF</div>
-        </div>
-        <div class="col-sm-4">
-          <img src="http://placehold.it/612x612/F1C42A/FFFFFF&amp;text=loading" class="img-responsive">
-          <div class="caption">Image Background: F1C42A &amp; Image Foreground: FFFFFF</div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-4">
-          <img src="http://placehold.it/612x612/2ECC71/FFFFFF&amp;text=loading" class="img-responsive">
-          <div class="caption">Image Background: 2ECC71 &amp; Image Foreground: FFFFFF</div>
-        </div>
-        <div class="col-sm-4">
-          <img src="http://placehold.it/612x612/E74C3C/FFFFFF&amp;text=loading" class="img-responsive">
-          <div class="caption">Image Background: E74C3C &amp; Image Foreground: FFFFFF</div>
-        </div>
-        <div class="col-sm-4">
-          <img src="http://placehold.it/612x612/3398DB/FFFFFF&amp;text=loading" class="img-responsive">
-          <div class="caption">Image Background: 3398DB &amp; Image Foreground: FFFFFF</div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-4">
-          <img src="http://placehold.it/612x612/798795/FFFFFF&amp;text=loading" class="img-responsive">
-          <div class="caption">Image Background: 798795 &amp; Image Foreground: FFFFFF</div>
-        </div>
-        <div class="col-sm-4">
-          <img src="http://placehold.it/612x612/FF0044/FFFFFF&amp;text=loading" class="img-responsive">
-          <div class="caption">Image Background: FF0044 &amp; Image Foreground: FFFFFF</div>
-        </div>
-        <div class="col-sm-4">
-          <img src="http://placehold.it/612x612/BDC3C7/FFFFFF&amp;text=loading" class="img-responsive">
-          <div class="caption">Image Background: BDC3C7 &amp; Image Foreground: FFFFFF</div>
+        <div class="col-sm-4" v-for="data in alldata"
+          v-if="data.posted_by._id == dataprofile.data._id">
+          <img :src="data.image" class="img-responsive">
+          <br>
+          <div class="caption" v-if="data.caption"> {{ data.caption }} </div>
+          <div class="comment" v-for="c in data.comment">
+            <strong> {{c.user.username }} </strong>
+            {{ c.comment }}
+          </div>
         </div>
       </div>
     </div>
@@ -85,7 +58,9 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 import navbar from '@/components/Navbar.vue'
+import $ from 'jquery'
 export default {
   components : {
     appNavbar : navbar
@@ -95,20 +70,49 @@ export default {
       profiles: {
         follower: 'follow',
         image: ''
-      },
+      }
+    }
+  },
+  computed: {
+    alldata(){
+      return this.$store.state.posts.posts
+    },
+    dataprofile(){
+      return this.$store.state.user.profile
+    },
+    dataUser(){
+      return this.$store.state.user.user
+    }
+  },
 
-    };
+  watch: {
+   '$route' (to, from) {
+     this.getAll(),
+     this.getUserById(this.$route.params.userId)
+    }
+  },
+
+  created(){
+    this.getUserLogin(),
+    this.getAll(),
+    this.getUserById(this.$route.params.userId)
   },
 
   methods:{
 
+    ...mapActions([
+      'getUserLogin',
+      'getUserById',
+      'getAll'
+    ]),
+
     onFileChange(e) {
-      let data = new FormData();
-      // data.append('email',this.profiles.email)
-      // data.append('username',this.profiles.username)
-      // data.append('password',this.profiles.password)
-      // data.append('fullname',this.profiles.fullname)
-      data.append('image',document.getElementById('inputFile').files[0])
+      // let data = new FormData();
+      // // data.append('email',this.profiles.email)
+      // // data.append('username',this.profiles.username)
+      // // data.append('password',this.profiles.password)
+      // // data.append('fullname',this.profiles.fullname)
+      // data.append('image',document.getElementById('inputFile').files[0])
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length)
         return;
@@ -120,7 +124,7 @@ export default {
       var self = this;
 
       reader.onload = (e) => {
-        self.profiles.image = e.target.result;
+        self.user.profile.data.image = e.target.result;
       };
       reader.readAsDataURL(file);
     }
@@ -128,6 +132,7 @@ export default {
 
 
 }
+
 </script>
 
 <style scoped="" lang="css">
