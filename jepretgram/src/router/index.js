@@ -16,13 +16,41 @@ export default new Router({
     {
       path: '/home',
       name: 'Home',
-      component: Home
+      component: Home,
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token')
+        if (token) {
+          next()
+        }else {
+          swal({
+            title: 'Ooops',
+            text: `You don't Have Access! `,
+            icon: 'error',
+            button: 'OK'
+          })
+          next('/')
+        }
+      }
     },
     {
       path: '/profile/:userId',
       name: 'Profile',
       component: Profile,
-      props: true
+      props: true,
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token')
+        if (token) {
+          next()
+        }else {
+          swal({
+            title: 'Ooops',
+            text: `You don't Have Access! `,
+            icon: 'error',
+            button: 'OK'
+          })
+          next('/')
+        }
+      }
     }
   ],
   mode: 'history'
