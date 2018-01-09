@@ -3,7 +3,7 @@ import axios from 'axios'
 import swal from 'sweetalert'
 
 const http = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: 'http://jepretgram-api.kautzaralibani.com/api',
   headers:{
     Authorization : localStorage.getItem('token')
   }
