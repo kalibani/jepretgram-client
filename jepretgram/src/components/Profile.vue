@@ -14,6 +14,7 @@
             <img class="avatar img-circle img-thumbnail" alt="avatar" src="../assets/image/user.png"/>
             <h2>Select Profile Photo</h2>
             <input type="file" class="text-center center-block well well-sm" id="inputFile" @change="onFileChange">
+            <button type="button" class="btn btn-sm btn-group-vertical" name="button" @click="photoUpdate(dataUser.userId), clear">update</button>
           </div>
           <div v-else>
               <img class="avatar img-circle img-thumbnail updatePhoto-2" :src="dataprofile.data.image" style="cursor:pointer"/>
@@ -22,20 +23,27 @@
                 <input type="file"
                 class="text-center center-block well well-sm" id="inputFile" @change="onFileChange">
               </div>
+              <button type="button" class="btn btn-sm btn-group-vertical" name="button" @click="photoUpdate(dataUser.userId), clear">update</button>
           </div>
         </div>
       </div>
-      <div class="col-md-2 profile">
-          <h3> {{ dataprofile.data.username }}
-            <button type="button" class="btn btn-secondary btn-sm">Edit Profile</button>
-          </h3>
-          <h3>{{ dataprofile.data.fullname }}</h3>
+      <div class="col-md-2 profile" v-if="dataUser.userId == dataprofile.data._id">
+        <h3> {{ dataprofile.data.username }}
+          <button type="button" class="btn btn-secondary btn-sm">Edit Profile</button>
+        </h3>
+        <h3>{{ dataprofile.data.fullname }}</h3>
+      </div>
+      <div class="col-md-2 profile" v-else>
+        <h3> {{ dataprofile.data.username }}
+
+        </h3>
+        <h3>{{ dataprofile.data.fullname }}</h3>
       </div>
       <div class="col-md-2 button">
         <h3 style="text-align:center;">
-          <span class="btn btn-md btn-primary btn-block">
+          <span class="btn btn-md btn-primary btn-block" :disabled="dataprofile.data._id === dataUser.userId">
             <input type="checkbox" v-model="profiles.follower" true-value="following"
-            false-value="follow" class="btn btn-md btn-primary btn-block custom-control-input">{{profiles.follower}}
+            false-value="follow" @click="follow(dataprofile.data._id)" class="btn btn-md btn-primary btn-block custom-control-input">{{profiles.follower}}
           </span>
         </h3>
       </div>
@@ -103,20 +111,17 @@ export default {
     ...mapActions([
       'getUserLogin',
       'getUserById',
-      'getAll'
+      'getAll',
+      'updatePhoto',
+      'follow'
     ]),
 
     onFileChange(e) {
-      // let data = new FormData();
-      // // data.append('email',this.profiles.email)
-      // // data.append('username',this.profiles.username)
-      // // data.append('password',this.profiles.password)
-      // // data.append('fullname',this.profiles.fullname)
-      // data.append('image',document.getElementById('inputFile').files[0])
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length)
-        return;
-      this.createImage(files[0]);
+        return
+      this.createImage(files[0])
+      this.profiles.image = files[0]
     },
     createImage(file) {
       var image = new Image();
@@ -124,9 +129,22 @@ export default {
       var self = this;
 
       reader.onload = (e) => {
-        self.user.profile.data.image = e.target.result;
+        self.dataprofile.data.image = e.target.result;
       };
       reader.readAsDataURL(file);
+    },
+
+    photoUpdate(id){
+      let obj = {
+        id: id,
+        image: this.profiles.image
+      }
+      this.updatePhoto(obj)
+
+    },
+
+    clear(){
+      this.dataprofile.data.image = {}
     }
   }
 

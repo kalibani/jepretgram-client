@@ -24,23 +24,37 @@
                     <div class="media-body">
                       <div class="well well-lg">
                         <p class="media-heading text-uppercase reviews">{{p.posted_by.username}}</p>
-
                         <div class="embed-responsive embed-responsive-16by9">
                             <img :src="p.image" class="img-responsive">
+                        </div>
+                        <div class="love">
+                          <div class="pretty p-icon p-toggle p-plain">
+                            <input type="checkbox" @click="love(p._id)"
+                            :disabled="p.posted_by._id == dataUser.userId"/>
+                            <div class="state p-off">
+                              <i class="icon fa fa-heart-o"></i>
+                              <label></label>
+                            </div>
+                            <div class="state p-on p-info-o">
+                              <i class="icon fa fa-heart"></i>
+                              <label></label>
+                            </div>
+                          </div>
                         </div>
                         <p class="media-comment">
                           <strong>{{p.posted_by.username}}</strong> {{p.caption}}
                         </p>
                         <div class="comment" v-for="c in p.comment">
-                          <strong> {{c.user.username }} </strong>
+                          <strong> {{c.user.username}} </strong>
                           {{ c.comment }}
                         </div>
                         <br>
                         <form class="form-horizontal"role="form">
                           <div class="form-group">
                             <div class="col-lg-8">
-                              <input class="form-control" type="text" placeholder="Add a comment... ">
+                              <input class="form-control" v-model="comment" type="text" placeholder="Add a comment... ">
                             </div>
+                            <button type="button" name="button" class="btn-primary btn-sm" @click="addComment(p._id)">add comment</button>
                           </div>
                         </form>
                       </div>
@@ -63,7 +77,8 @@ import upload from './Upload.vue'
 export default {
   data(){
     return {
-      follow: 'follow'
+      follow: 'follow',
+      comment: ''
     }
   },
   components : {
@@ -83,9 +98,22 @@ export default {
   methods:{
     ...mapActions([
       'getAll',
-      'getUserLogin'
-    ])
+      'getUserLogin',
+      'love',
+      'tambahcomment'
+    ]),
+
+    addComment(id){
+      let obj = {
+        id : id,
+        comment : this.comment
+      }
+      this.tambahcomment(obj)
+      this.getAll()
+      this.comment = ''
+    }
   },
+
   created(){
     this.getAll(),
     this.getUserLogin()

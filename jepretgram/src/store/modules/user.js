@@ -21,9 +21,23 @@ const mutations = {
     console.log('data user login', state.user.userId)
   },
   saveProfile (state, payload){
-    console.log('data Profile user----', payload)
     state.profile = payload
-    console.log('data Profile user', state.profile)
+  },
+  savePhotoProfile (state, payload) {
+    state.profile.image = payload.data.image
+
+  },
+  saveFollow (state, payload){
+    console.log('b',payload.data);
+    if (payload.data) {
+      let index = state.profile.data.follow.indexOf(payload.data.email)
+      if (index == -1) {
+        state.profile.data.follow.push(payload.data)
+      }else {
+        state.profile.data.follow.splice(index, 1)
+      }
+    }
+
   }
 
 }
@@ -33,7 +47,6 @@ const actions = {
     console.log(payload);
     http.post('/authentication/login', payload)
     .then((response) => {
-      console.log(response.data);
       if(response.data == 'Unregistered Email/Username, Please Register First!'){
         swal({
           title: 'Ooops',
@@ -76,21 +89,22 @@ const actions = {
       console.log(err)
     })
   },
-  //
-  // updatePhoto({commit}, payload){
-  //   http.put('/authentication/register/'+id, payload)
-  //   .then(({data}) => {
-  //     console.log(data)
-  //     commit('saveUsers', data)
-  //     swal({
-  //       icon: 'success',
-  //       text: data.message,
-  //       button: 'OK'
-  //     })
-  //   }).catch((err) => {
-  //     console.log(err)
-  //   })
-  // },
+
+  updatePhoto({commit}, payload){
+    let foto = new FormData()
+    foto.append('image', payload.image)
+    http.put('/users/update/avatar/'+payload.id, foto)
+    .then(({data}) => {
+      commit('savePhotoProfile', data)
+      swal({
+        icon: 'success',
+        text: data.message,
+        button: 'OK'
+      })
+    }).catch((err) => {
+      console.log(err)
+    })
+  },
 
   getUserLogin({commit}){
     http.post('/users/myprofile')
@@ -105,10 +119,20 @@ const actions = {
   getUserById({commit}, id){
     http.get('/users/'+ id )
     .then(({data}) => {
-      console.log('getUserById',data);
       commit('saveProfile',data)
     })
     .catch(err =>{
+      console.log(err);
+    })
+  },
+
+  follow({commit}, payload){
+    http.post('/users/follow', {id:payload})
+    .then(({data}) => {
+      console.log('data follow', data);
+      commit('saveFollow', data)
+    })
+    .catch((err) => {
       console.log(err);
     })
   }

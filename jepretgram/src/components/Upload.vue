@@ -85,7 +85,7 @@
         reader.onload = function (e) {
           $('#img-upload').attr('src', e.target.result);
         }
-        reader.readAsDataURL(input.files[0]);
+        reader.readAsDataURL(input.files[0])
       }
     }
 
@@ -93,15 +93,7 @@
       readURL(this);
       $(".caption").show()
       $(".upload").show()
-    });
-
-    $(".upload").click(function(){
-      setTimeout(function(){
-        $(".caption").hide()
-        $(".upload").hide()
-        location.reload()
-      }, 2000);
-    });
+    })
 
   });
 

@@ -9,14 +9,14 @@
             </a>
           </router-link>
     			<ul class="nav navbar-nav navbar-right">
-    				<router-link :to="{ name: 'Home' }">
-              <a class="navbar-brand">
-                <i class="fa fa-heart-o fa-lg" aria-hidden="true"></i>
-              </a>
-            </router-link>
               <router-link :to="{ name: 'Profile', params: { userId: user.userId} }">
                 <a class="navbar-brand">
                   <i class="fa fa-user fa-lg"></i>
+                </a>
+              </router-link>
+              <router-link to="/">
+                <a class="navbar-brand" @click="signOut">
+                  <i class="fa fa-sign-out fa-md" aria-hidden="true">Sign Out</i>
                 </a>
               </router-link>
     			</ul>
@@ -31,7 +31,14 @@
 
 <script>
 export default {
-  props:['user']
+  props:['user'],
+  methods:{
+    signOut(){
+      localStorage.removeItem('token')
+      location.reload()
+    }
+  }
+
 }
 </script>
 
